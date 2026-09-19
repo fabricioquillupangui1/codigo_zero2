@@ -1,0 +1,280 @@
+/* =========================================
+   ESTILOS PANEL DE ADMINISTRACIÓN - CÓDIGO ZERO
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+body.admin-body {
+    background-color: #070913;
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Barra Superior / Navbar */
+.admin-navbar {
+    background: rgba(15, 23, 42, 0.9);
+    border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+}
+
+.admin-brand h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    color: #fff;
+}
+
+.admin-brand h2 span {
+    color: #00ffcc;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.badge-admin {
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid #a855f7;
+    color: #a855f7;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.btn-logout {
+    background: transparent;
+    border: 1px solid #f43f5e;
+    color: #f43f5e;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: #f43f5e;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+}
+
+/* Contenedor Principal */
+.admin-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 30px auto;
+    padding: 0 20px;
+    flex: 1;
+}
+
+/* Pestañas de Gestión */
+.admin-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.tab-admin-btn {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(0, 255, 204, 0.2);
+    color: #94a3b8;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+}
+
+.tab-admin-btn.active {
+    background: #00ffcc;
+    color: #070913;
+    border-color: #00ffcc;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+/* Paneles de Contenido */
+.admin-panel {
+    display: none;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 204, 0.2);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.admin-panel.active {
+    display: block;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.panel-header h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffcc;
+    font-size: 1.2rem;
+}
+
+/* Botón Cyberpunk General */
+.cyber-btn {
+    background: #00ffcc;
+    color: #070913;
+    border: none;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+.cyber-btn:hover {
+    background: #fff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    transform: translateY(-1px);
+}
+
+/* Tablas de Datos */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.cyber-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.cyber-table th, .cyber-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cyber-table th {
+    color: #a855f7;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+}
+
+.cyber-table tr:hover {
+    background: rgba(0, 255, 204, 0.03);
+}
+
+/* Botones de Acción CRUD */
+.btn-action {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-right: 5px;
+    transition: all 0.2s ease;
+}
+
+.btn-edit {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid #3b82f6;
+    color: #60a5fa;
+}
+
+.btn-edit:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.btn-delete {
+    background: rgba(244, 63, 94, 0.2);
+    border: 1px solid #f43f5e;
+    color: #fb7185;
+}
+
+.btn-delete:hover {
+    background: #f43f5e;
+    color: #fff;
+}
+
+/* ==========================================
+   ESTILOS PARA FORMULARIOS Y MODALES
+   ========================================== */
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 5px;
+}
+
+.cyber-input {
+    width: 100%;
+    padding: 9px 12px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #fff;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cyber-input:focus {
+    border-color: #00ffcc;
+    box-shadow: 0 0 8px rgba(0, 255, 204, 0.25);
+}
+
+/* Filas desplegables (Acordeón en tablas si se requiere) */
+.options-dropdown-row td {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-left: 3px solid #a855f7;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .admin-navbar {
+        padding: 12px 15px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .admin-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 8px;
+    }
+
+    .admin-panel {
+        padding: 15px;
+    }
+}

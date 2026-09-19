@@ -1,0 +1,109 @@
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA EL LANDING (index.html)
+   ========================================= */
+
+/* Contenedor general del landing */
+.container {
+    max-width: 1150px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Efectos de texto y resplandor neón adicionales */
+.text-neon {
+    color: #00ffcc;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+/* Navegación */
+.navbar {
+    border-bottom: 1px solid rgba(0, 255, 204, 0.15);
+    margin-bottom: 20px;
+}
+
+/* Botones principales con efectos de brillo al pasar el mouse */
+.btn-primary {
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+.btn-primary:hover {
+    background: #fff !important;
+    color: #0b0f19 !important;
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
+    transform: translateY(-2px);
+}
+
+/* Sección Hero */
+.hero {
+    position: relative;
+}
+
+.hero-banner-container img {
+    border: 1px solid rgba(0, 255, 204, 0.4);
+    transition: transform 0.4s ease;
+}
+
+.hero-banner-container img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.5) !important;
+}
+
+/* Tarjetas Académicas y de Información */
+.academic-section div > div {
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+.academic-section div > div:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 255, 204, 0.6) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Tarjetas de Integrantes */
+.team-section div div {
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+.team-section div div:hover {
+    transform: translateY(-3px);
+    border-color: #00ffcc !important;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+}
+
+/* Animaciones sutiles para los avatares */
+.team-section img {
+    border: 2px solid rgba(0, 255, 204, 0.4);
+}
+
+/* Footer corporativo integrado */
+.site-footer {
+    text-align: center;
+    padding: 40px 0;
+    margin-top: 60px;
+    border-top: 1px solid rgba(0, 255, 204, 0.15);
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.site-footer span {
+    color: #00ffcc;
+    font-weight: 600;
+}
+
+.hero-main-img {
+    max-width: 700px; /* Cambia este valor a tu gusto (ej. 600px, 800px) */
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,255,204,0.3);
+    border: 1px solid rgba(0, 255, 204, 0.4);
+    transition: transform 0.4s ease;
+}
+
+.hero-main-img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+}

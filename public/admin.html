@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Código Zero // Panel de Administración</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+
+  <!-- Navbar de Admin -->
+  <header class="admin-navbar">
+    <div class="admin-brand">
+      <h2>CÓDIGO <span>ZERO // ADMIN</span></h2>
+    </div>
+    <div class="admin-user-info">
+      <span class="badge-admin">ROL: ADMINISTRADOR</span>
+      <span id="admin-name" style="color: #cbd5e1; font-weight: 600;">Admin</span>
+      <button id="btn-logout" class="btn-logout">CERRAR SESIÓN</button>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="admin-container">
+    
+    <!-- Pestañas de Navegación del Panel (6 pestañas en total) -->
+    <div class="admin-tabs" style="flex-wrap: wrap; gap: 8px;">
+      <button class="tab-admin-btn active" data-target="panel-users">Usuarios</button>
+      <button class="tab-admin-btn" data-target="panel-modules">Módulos</button>
+      <button class="tab-admin-btn" data-target="panel-questions">Preguntas</button>
+      <button class="tab-admin-btn" data-target="panel-history">Historial Partidas</button>
+      <button class="tab-admin-btn" data-target="panel-answers">Respuestas Detalle</button>
+    </div>
+
+    <!-- PANEL 1: USUARIOS (CRUD) -->
+    <section id="panel-users" class="admin-panel active">
+      <div class="panel-header">
+        <h3>Listado de Usuarios Registrados</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>Nickname</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Avatar</th>
+              <th>Puntaje DLS</th>
+              <th>Nivel Desbloqueado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+   <!-- PANEL 2: MÓDULOS (CRUD) -->
+    <section id="panel-modules" class="admin-panel">
+      <div class="panel-header">
+        <h3>Listado de Módulos del Sistema</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Slug</th>
+              <th>Título</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="modules-table-body">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+    </div>
+    </section>
+    <!-- PANEL 3: PREGUNTAS (CRUD) -->
+    <section id="panel-questions" class="admin-panel">
+      <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <h3>Gestión de Preguntas por Módulo</h3>
+        <button id="btn-create-question" class="cyber-btn" style="padding: 8px 15px; font-size: 0.9rem; background: #00ffcc; color: #0f172a; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">+ Nueva Pregunta</button>
+      </div>
+      <div class="table-responsive">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>ID Módulo</th>
+              <th>Pregunta</th>
+              <th>Puntos</th>
+              <th>Dificultad</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="questions-table-body">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PANEL 4: OPCIONES DE PREGUNTAS (CRUD) -->
+    <section id="panel-options" class="admin-panel">
+      <div class="panel-header">
+        <h3>Gestión de Opciones de Respuesta</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>ID Pregunta</th>
+              <th>Texto de Opción</th>
+              <th>¿Es Correcta?</th>
+              <th>Orden</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="options-table-body">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PANEL 5: HISTORIAL DE PARTIDAS (Solo Lectura / Analíticas) -->
+    <section id="panel-history" class="admin-panel">
+      <div class="panel-header">
+        <h3>Historial General de Partidas (Game History)</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario ID</th>
+              <th>Módulo ID</th>
+              <th>Puntaje</th>
+              <th>Racha Max</th>
+              <th>¿Aprobó?</th>
+              <th>Duración (s)</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PANEL 6: RESPUESTAS DE USUARIOS (Solo Lectura) -->
+    <section id="panel-answers" class="admin-panel">
+      <div class="panel-header">
+        <h3>Detalle de Respuestas en Partidas (Game Answers)</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Historial ID</th>
+              <th>Pregunta ID</th>
+              <th>Opción ID</th>
+              <th>¿Correcta?</th>
+              <th>Pts Ganados</th>
+              <th>Tiempo Restante</th>
+            </tr>
+          </thead>
+          <tbody id="answers-table-body">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL PARA CREAR PREGUNTA CON SUS OPCIONES EN UN SOLO FORMULARIO -->
+  <div id="modal-question" class="cyber-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center;">
+    <div class="cyber-modal-content" style="background: #0f172a; border: 2px solid #00ffcc; padding: 25px; width: 90%; max-width: 600px; border-radius: 8px; box-shadow: 0 0 20px rgba(0,255,204,0.3); max-height: 90vh; overflow-y: auto;">
+      <h3 style="color: #00ffcc; font-family: 'Orbitron', sans-serif; margin-bottom: 15px;">Añadir Pregunta y Opciones</h3>
+      
+      <form id="form-create-question">
+        <div class="form-group">
+          <label for="q-modal-module">ID del Módulo:</label>
+          <input type="number" id="q-modal-module" class="cyber-input" required placeholder="Ej: 1">
+        </div>
+
+        <div class="form-group">
+          <label for="q-modal-text">Enunciado de la Pregunta:</label>
+          <textarea id="q-modal-text" class="cyber-input" required rows="3" placeholder="Escribe la pregunta aquí..."></textarea>
+        </div>
+
+        <!-- Campo para el fragmento de código opcional -->
+        <div class="form-group">
+          <label for="q-modal-code">Fragmento de Código (Opcional):</label>
+          <textarea id="q-modal-code" class="cyber-input" rows="3" placeholder="Ej: &lt;header&gt;&#10;  &lt;h1&gt;Mi Web&lt;/h1&gt;&#10;&lt;/header&gt;"></textarea>
+        </div>
+
+        <!-- Campo para la explicación de la respuesta -->
+        <div class="form-group">
+          <label for="q-modal-explanation">Explicación / Retroalimentación:</label>
+          <textarea id="q-modal-explanation" class="cyber-input" rows="2" placeholder="Explica por qué esa es la respuesta correcta..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label for="q-modal-points">Puntos:</label>
+            <input type="number" id="q-modal-points" class="cyber-input" value="100" required>
+          </div>
+          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label for="q-modal-diff">Dificultad:</label>
+            <select id="q-modal-diff" class="cyber-input">
+              <option value="facil">Fácil</option>
+              <option value="media" selected>Media</option>
+              <option value="dificil">Difícil</option>
+            </select>
+          </div>
+        </div>
+
+        <hr style="border-color: #334155; margin: 15px 0;">
+        <h4 style="color: #38bdf8; margin-bottom: 10px; font-family: 'Orbitron', sans-serif; font-size: 0.95rem;">Opciones de Respuesta (Selecciona la correcta)</h4>
+
+        <!-- Opción 1 -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+          <input type="radio" name="correct_option" value="0" checked style="accent-color: #00ffcc; transform: scale(1.2);">
+          <input type="text" class="q-option-input cyber-input" required placeholder="Opción 1 (Correcta por defecto)" style="flex: 1;">
+        </div>
+        <!-- Opción 2 -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+          <input type="radio" name="correct_option" value="1" style="accent-color: #00ffcc; transform: scale(1.2);">
+          <input type="text" class="q-option-input cyber-input" required placeholder="Opción 2" style="flex: 1;">
+        </div>
+        <!-- Opción 3 -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+          <input type="radio" name="correct_option" value="2" style="accent-color: #00ffcc; transform: scale(1.2);">
+          <input type="text" class="q-option-input cyber-input" required placeholder="Opción 3" style="flex: 1;">
+        </div>
+        <!-- Opción 4 -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+          <input type="radio" name="correct_option" value="3" style="accent-color: #00ffcc; transform: scale(1.2);">
+          <input type="text" class="q-option-input cyber-input" required placeholder="Opción 4" style="flex: 1;">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" id="btn-close-modal" style="padding: 8px 15px; background: #475569; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.8rem;">Cancelar</button>
+          <button type="submit" class="cyber-btn" style="padding: 8px 20px;">Guardar Pregunta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lógica de Administración con Supabase -->
+  <script type="module" src="js/admin.js"></script>
+
+  <!-- Script para el botón de Cerrar Sesión -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnLogout = document.getElementById('btn-logout');
+      if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+          localStorage.removeItem('cz_user');
+          window.location.replace('login.html');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

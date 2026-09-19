@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CÓDIGO ZERO - Zona de Desafío</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="bg-dark text-neon">
+    <header class="game-header">
+        <!-- Perfil y Racha (Inspirado en la Imagen 2) -->
+        <div class="user-game-info">
+            <div class="avatar-container-small">
+                <img id="game-user-avatar" src="" alt="Avatar" style="display: none;">
+                <div id="game-avatar-fallback" class="avatar-fallback-small">FC</div>
+            </div>
+            <div class="user-text-info">
+                <span id="game-user-name" class="game-nickname">Fabricio</span>
+                <span id="streak-counter" class="streak-badge">Racha: 1x 🔥</span>
+            </div>
+        </div>
+
+        <!-- Métricas del Juego -->
+        <div class="game-metrics">
+            <div class="score-board">Puntuación: <span id="current-score">0</span> DLS</div>
+            <div class="timer-board">⏱️ Tiempo: <span id="time-left">20</span>s</div>
+        </div>
+
+        <!-- Botones de Control Superior -->
+        <div class="game-nav-actions">
+            <button class="btn-control-panel" onclick="window.location.href='levels.html'">Panel 🏠</button>
+            <button class="btn-control-exit" onclick="confirmExit()">Salir 🚪</button>
+        </div>
+    </header>
+
+    <main class="game-container">
+        <div id="quiz-box" class="quiz-card">
+            <div class="question-meta">
+                <span id="question-counter">Pregunta 1 de 4</span>
+                <span id="question-difficulty" class="badge">Dificultad</span>
+            </div>
+            
+            <h2 id="question-text">Cargando pregunta...</h2>
+            
+            <div id="code-snippet-box" class="code-box hidden">
+                <pre><code id="code-snippet-text"></code></pre>
+            </div>
+
+            <div id="options-container" class="options-grid">
+                <!-- Opciones cargadas dinámicamente -->
+            </div>
+
+            <button id="next-btn" class="btn-neon hidden">Siguiente Pregunta ⚡</button>
+        </div>
+
+        <div id="result-box" class="result-card hidden">
+            <h2>🏆 ¡Desafío Finalizado!</h2>
+            <p id="result-summary">Calculando resultados...</p>
+            <button class="btn-neon" onclick="window.location.href='levels.html'">Volver al Inicio 🏠</button>
+        </div>
+    </main>
+
+    <!-- Script para inicializar los datos del usuario en la barra superior -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userData = JSON.parse(localStorage.getItem('cz_user')) || {
+                nickname: 'Fabricio',
+                avatar: ''
+            };
+            const displayName = userData.nickname || 'Fabricio';
+            
+            const nameEl = document.getElementById('game-user-name');
+            if(nameEl) nameEl.textContent = displayName;
+
+            const avatarImg = document.getElementById('game-user-avatar');
+            const fallbackDiv = document.getElementById('game-avatar-fallback');
+
+            if(userData.avatar && (userData.avatar.startsWith('http') || userData.avatar.startsWith('data:'))) {
+                avatarImg.src = userData.avatar;
+                avatarImg.style.display = 'block';
+                if(fallbackDiv) fallbackDiv.style.display = 'none';
+            } else {
+                if(avatarImg) avatarImg.style.display = 'none';
+                if(fallbackDiv) {
+                    fallbackDiv.style.display = 'flex';
+                    fallbackDiv.textContent = displayName.substring(0, 2).toUpperCase();
+                }
+            }
+        });
+
+        function confirmExit() {
+            if(confirm('¿Estás seguro de salir del desafío? Se perderá el progreso actual.')) {
+                window.location.href = 'levels.html';
+            }
+        }
+    </script>
+    <script type="module" src="js/game.js"></script>
+</body>
+</html>

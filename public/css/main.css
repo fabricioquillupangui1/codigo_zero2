@@ -1,0 +1,646 @@
+/* =========================================
+   ESTILOS GENERALES CON FONDO PERSONALIZADO
+========================================= */
+body.bg-dark {
+    background: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 0.92)), 
+                url('https://i.postimg.cc/htGr1sMZ/Chat-GPT-Image-19-sept-2026-10-37-07-a-m.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #00ffcc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* =========================================
+   BARRA SUPERIOR (USUARIO, ROL Y PUNTAJE)
+========================================= */
+.top-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(19, 28, 46, 0.85);
+    border: 1px solid rgba(0, 255, 204, 0.4);
+    padding: 12px 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-profile-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Contenedor del avatar con soporte para respaldo e iniciales */
+.avatar-wrapper {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #00ffcc;
+    background: #0b0f19;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-fallback-txt {
+    color: #00ffcc;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.username-txt {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Insignia de rol estilo pastilla morada */
+.role-badge-pill {
+    background-color: #1a103c;
+    border: 2px solid #a855f7;
+    color: #c084fc;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+}
+
+.score-reset-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.total-score-box {
+    background: #0b0f19;
+    border: 1px solid #00ffcc;
+    padding: 6px 14px;
+    border-radius: 8px;
+    color: #00ffcc;
+    font-size: 0.95rem;
+    box-shadow: inset 0 0 5px rgba(0, 255, 204, 0.2);
+}
+
+.btn-reset {
+    background: transparent;
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+    background: #ff4d4d;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+/* =========================================
+   VISTA 1: SELECCIÓN DE MÓDULOS (TARJETAS UNIFORMES)
+========================================= */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.grid-modules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.module-card {
+    background: rgba(19, 28, 46, 0.9);
+    border: 2px solid #00ffcc;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 220px; /* Garantiza la misma altura uniforme */
+    box-sizing: border-box;
+    backdrop-filter: blur(4px);
+}
+
+.module-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
+}
+
+.module-card h3 {
+    color: #00ffcc;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.35rem;
+}
+
+.module-card p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    flex-grow: 1; /* Distribuye el espacio de manera uniforme */
+}
+
+.module-card button {
+    background: transparent;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s, color 0.3s;
+}
+
+.module-card button:hover:not(:disabled) {
+    background: #00ffcc;
+    color: #0b0f19;
+}
+
+.module-card.disabled {
+    opacity: 0.5;
+    border-color: #475569;
+}
+
+.module-card.disabled button {
+    border-color: #475569;
+    color: #475569;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   VISTA 2: JUEGO Y PREGUNTAS
+========================================= */
+.game-container {
+    max-width: 1300px;
+    margin: 20px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center; /* Centra las tarjetas horizontalmente */
+}
+
+.quiz-card, .result-card {
+    background: #131c2e;
+    border: 2px solid #00ffcc;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+}
+
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.option-btn {
+    background: #1a263f;
+    color: #fff;
+    border: 1px solid #00ffcc;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.3s;
+}
+
+.option-btn:hover:not(:disabled) {
+    background: #00ffcc;
+    color: #0b0f19;
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+.option-btn.correct {
+    background: #00cc66 !important;
+    border-color: #00cc66 !important;
+    color: #fff;
+}
+
+.option-btn.incorrect {
+    background: #cc0033 !important;
+    border-color: #cc0033 !important;
+    color: #fff;
+}
+
+.code-box {
+    background: #05080e;
+    border: 1px dashed #00ffcc;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+.btn-neon {
+    background: transparent;
+    color: #00ffcc;
+    border: 2px solid #00ffcc;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+.btn-neon:hover {
+    background: #00ffcc;
+    color: #0b0f19;
+}
+
+/* =========================================
+   UTILIDADES
+========================================= */
+.hidden { 
+    display: none; 
+}
+
+/* =========================================
+   COMPLEMENTOS PARA LA ZONA DE DESAFÍO (GAME.HTML)
+========================================= */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(19, 28, 46, 0.9);
+    border: 1px solid rgba(0, 255, 204, 0.4);
+    padding: 12px 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
+    max-width: 1300px; /* Sincronizado con el ancho del contenedor */
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+.user-game-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-container-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #00ffcc;
+    background: #0b0f19;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar-container-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-fallback-small {
+    color: #00ffcc;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.user-text-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.game-nickname {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.streak-badge {
+    color: #ff9900;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.game-metrics {
+    display: flex;
+    gap: 20px;
+}
+
+.score-board, .timer-board {
+    background: #0b0f19;
+    border: 1px solid #00ffcc;
+    padding: 6px 14px;
+    border-radius: 8px;
+    color: #00ffcc;
+    font-size: 0.9rem;
+    box-shadow: inset 0 0 5px rgba(0, 255, 204, 0.2);
+}
+
+.game-nav-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-control-panel, .btn-control-exit {
+    background: transparent;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-control-panel {
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+}
+
+.btn-control-panel:hover {
+    background: #00ffcc;
+    color: #0b0f19;
+}
+
+.btn-control-exit {
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+}
+
+.btn-control-exit:hover {
+    background: #ff4d4d;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+.question-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+.badge {
+    background: #1a103c;
+    border: 1px solid #a855f7;
+    color: #c084fc;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* =========================================
+   MODALES (ADVERTENCIA Y RETROALIMENTACIÓN)
+========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 15, 25, 0.88);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.warning-modal-card {
+    background: #131c2e;
+    border: 2px solid #ff9900;
+    padding: 35px;
+    border-radius: 14px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(255, 153, 0, 0.3);
+}
+
+.warning-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.warning-modal-card h2 {
+    color: #ff9900;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.warning-modal-card p {
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.warning-subtext {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 25px !important;
+}
+
+.warning-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-acobardar {
+    background: transparent;
+    border: 2px solid #ff4d4d;
+    color: #ff4d4d;
+    padding: 10px 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-acobardar:hover {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+.btn-aceptar-reto {
+    background: transparent;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    padding: 10px 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-aceptar-reto:hover {
+    background: #00ffcc;
+    color: #0b0f19;
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+.feedback-card {
+    background: rgba(11, 15, 25, 0.9);
+    border: 1px dashed #00ffcc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.feedback-card h4 {
+    color: #00ffcc;
+    margin: 0 0 5px 0;
+    font-size: 0.95rem;
+}
+
+.feedback-card p {
+    color: #ffffff;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   ESTILOS ADICIONALES PARA LA VENTANA DE REGLAS
+========================================= */
+.rules-card {
+    text-align: left !important;
+    max-width: 520px !important;
+}
+
+.rules-list-box {
+    background: #0b0f19;
+    border: 1px solid rgba(0, 255, 204, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.rules-list-box p {
+    font-size: 0.9rem !important;
+    margin: 8px 0 !important;
+}
+
+.rules-list-box ul {
+    margin: 5px 0 10px 20px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.result-card {
+    background: #131c2e;
+    border: 2px solid #00ffcc;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+    width: 100%;
+    max-width: 650px; /* Tamaño perfecto para el resumen final */
+    box-sizing: border-box;
+    text-align: left; /* O text-align: center según prefieras */
+}
+
+.quiz-card {
+    background: #131c2e;
+    border: 2px solid #00ffcc;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+    width: 100%;
+    max-width: 950px; /* Ancho ideal para leer preguntas y opciones sin estirarse de más */
+    box-sizing: border-box;
+}
+
+/* =========================================
+   CUADRÍCULA DE OPCIONES (2x2 SIMÉTRICA)
+========================================= */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas iguales */
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.option-btn {
+    background: #1a263f;
+    color: #fff;
+    border: 1px solid #00ffcc;
+    padding: 14px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.option-btn:hover:not(:disabled) {
+    background: #00ffcc;
+    color: #0b0f19;
+    box-shadow: 0 0 12px rgba(0, 255, 204, 0.4);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   ESTILO MINI-IDE PARA EL BLOQUE DE CÓDIGO
+========================================= */
+.code-box {
+    background: #05080e;
+    border: 1px solid rgba(0, 255, 204, 0.4);
+    border-radius: 8px;
+    margin: 20px 0;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+/* Barra superior simulada del editor */
+.code-box::before {
+    content: "● ● ●   Code Editor - Kotlin";
+    display: block;
+    background: #0f172a;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-family: monospace;
+    padding: 6px 12px;
+    border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.code-box pre, .code-box code {
+    padding: 15px;
+    margin: 0;
+    display: block;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    color: #00ffcc;
+    font-size: 0.9rem;
+}

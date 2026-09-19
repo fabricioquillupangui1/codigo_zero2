@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CÓDIGO ZERO - Selección de Módulos</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="bg-dark text-neon">
+
+   <!-- Barra Superior de Usuario y Puntaje -->
+    <header class="top-nav-bar">
+        <div class="user-profile-info">
+            <div class="avatar-wrapper">
+                <img id="user-avatar" src="" alt="Avatar" class="avatar-img" onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';">
+                <div id="avatar-fallback" class="avatar-fallback-txt" style="display:none;">CZ</div>
+            </div>
+            <span id="user-name-display" class="username-txt">Cargando...</span>
+            <div id="user-role-display" class="role-badge-pill">ROL: ESTUDIANTE</div>
+        </div>
+
+        <div class="score-reset-container" style="display: flex; align-items: center; gap: 10px;">
+            <div class="total-score-box">
+                <span>Puntaje:</span> <strong id="total-score-val">0</strong> ⚡
+            </div>
+            
+            <!-- Botón de Premios (Oculto hasta terminar y aprobar el Módulo 4) -->
+            <button id="btn-ver-premios" class="btn-premios" onclick="showFinalRewardModal()" style="display: none; background: linear-gradient(135deg, #00ffcc, #007acc); color: #0f172a; font-weight: bold; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 0 15px rgba(0,255,204,0.4); font-size: 13px; align-items: center; gap: 5px;">
+                🎁 Ver Premios
+            </button>
+
+            <button id="btn-reset-game" class="btn-reset" onclick="resetUserProgress()">Reiniciar</button>
+        </div>
+    </header>
+
+    <script>
+        // Verificamos al cargar si el Módulo 4 ya fue superado y aprobado oficialmente
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasCompletedModule4 = localStorage.getItem('cz_completed_module_4') === 'true';
+            if (hasCompletedModule4) {
+                const btnPremios = document.getElementById('btn-ver-premios');
+                if (btnPremios) btnPremios.style.display = 'inline-flex';
+            }
+        });
+
+        // Función para mostrar la ventana de premios desde el botón superior en levels.html
+        function showFinalRewardModal() {
+            let rewardOverlay = document.createElement('div');
+            rewardOverlay.id = 'reward-modal-overlay';
+            rewardOverlay.className = 'modal-overlay';
+            rewardOverlay.innerHTML = `
+                <div class="warning-modal-card rules-card" style="text-align: center; border: 2px solid #00ffcc; box-shadow: 0 0 25px rgba(0,255,204,0.3); background: #0f172a; padding: 25px; border-radius: 12px; max-width: 450px; margin: auto; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
+                    <div class="warning-icon" style="font-size: 50px; margin-bottom: 10px;">🏆🎁</div>
+                    <h2 style="color: #00ffcc; margin-bottom: 10px;">¡TUS LIBROS DE RECOMPENSA!</h2>
+                    <p style="margin-bottom: 15px; color: #cbd5e1; font-size: 14px;">Has completado con éxito todo <strong>Código Zero</strong>. Aquí tienes tus libros exclusivos listos para descargar:</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left;">
+                        <a href="https://drive.google.com/file/d/170hM4j54pKG94rAAbysEYt13jnICtpzm/view?usp=sharing" target="_blank" style="background: rgba(0,255,204,0.1); padding: 12px; border-radius: 8px; color: #00ffcc; text-decoration: none; border: 1px solid rgba(0,255,204,0.3); display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                            📖 <span><strong>Primeros pasos con Ubuntu</strong> (Guía de inicio)</span>
+                        </a>
+                        <a href="https://drive.google.com/file/d/13aRWs-TC6gMyevTFZkD8Ih7uoN83JObW/view?usp=sharing" target="_blank" style="background: rgba(0,255,204,0.1); padding: 12px; border-radius: 8px; color: #00ffcc; text-decoration: none; border: 1px solid rgba(0,255,204,0.3); display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                            🐍 <span><strong>El tutorial de Python</strong> (Referencia oficial)</span>
+                        </a>
+                    </div>
+
+                    <button id="btn-cerrar-premio" class="btn-aceptar-reto" style="width: 100%; background: linear-gradient(135deg, #00ffcc, #007acc); color: #0f172a; font-weight: bold; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">CERRAR 🚀</button>
+                </div>
+            `;
+            document.body.appendChild(rewardOverlay);
+
+            document.getElementById('btn-cerrar-premio').onclick = () => {
+                rewardOverlay.remove();
+            };
+        }
+    </script>
+
+    <main class="container">
+        <section class="hero-header" style="text-align: center; padding: 20px 20px 10px 20px;">
+            <h1 style="color: #00ffcc; font-size: 2.3rem; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0,255,204,0.5);">⚡ CÓDIGO ZERO ⚡</h1>
+            <p style="color: #94a3b8; font-size: 1.05rem;">Selecciona el área tecnológica para desplegar tus habilidades</p>
+            <div style="margin-top: 10px;">
+                <a href="login.html" onclick="localStorage.removeItem('cz_user');" style="color: #a855f7; text-decoration: none; font-size: 0.9rem;">← Volver al Login</a>
+            </div>
+        </section>
+
+        <section id="modules-container" class="grid-modules">
+            <!-- Los módulos se cargarán dinámicamente desde Supabase vía Backend -->
+            <p class="loading" style="text-align: center; grid-column: 1 / -1; color: #00ffcc; font-size: 1.1rem; margin-top: 40px;">Cargando módulos del sistema...</p>
+        </section>
+    </main>
+
+    <!-- Script que se conecta a Supabase y pinta las tarjetas -->
+    <script src="js/app.js"></script>
+</body>
+</html>
