@@ -58,7 +58,7 @@ function resetUserProgress() {
         localStorage.setItem('cz_score', '0');
         localStorage.setItem('cz_max_unlocked_module', '1'); // Reinicia el desbloqueo al módulo 1
         localStorage.removeItem('cz_completed_module_4'); // Oculta nuevamente el botón de premios
-        localStorage.removeItem('cz_completed_modules'); // Limpia el registro de módulos ya finalizados (evita trampas y restaura botones)
+        localStorage.removeItem('cz_completed_modules'); // Limpia el registro de módulos ya finalizados
         
         updateScoreDisplay(0);
         fetchModules(); // Recarga los módulos visualmente
@@ -75,31 +75,31 @@ async function fetchModules() {
     // Obtenemos el nivel máximo desbloqueado desde localStorage (por defecto es 1)
     const maxUnlocked = parseInt(localStorage.getItem('cz_max_unlocked_module')) || 1;
 
-    // Lista completa de los 4 módulos de tu plataforma
+    // Lista completa predeterminada de respaldo
     const defaultModules = [
         { 
             id: 1, 
             title: 'Módulo 1: Diseño Web y Móvil', 
             description: 'Maquetación avanzada, CSS Flexbox, Grid y principios de diseño responsive.', 
-            is_active: maxUnlocked >= 1 
+            is_active: true 
         },
         { 
             id: 2, 
             title: 'Módulo 2: Lógica y Backend', 
             description: 'Estructuras de control, funciones, manejo de APIs y servicios con Node.js.', 
-            is_active: maxUnlocked >= 2 
+            is_active: false 
         },
         { 
             id: 3, 
             title: 'Módulo 3: Bases de Datos', 
             description: 'Consultas DDL, DML, JOINS y restricciones avanzadas en SQL.', 
-            is_active: maxUnlocked >= 3 
+            is_active: false 
         },
         { 
             id: 4, 
             title: 'Módulo 4: Redes y Scrum', 
             description: 'Comandos de red, subredes IP, servidores Linux y metodologías ágiles.', 
-            is_active: maxUnlocked >= 4 
+            is_active: false 
         }
     ];
 
@@ -108,11 +108,24 @@ async function fetchModules() {
         const result = await response.json();
 
         if (result.success && result.data && result.data.length > 0) {
-            // Sincronizamos el estado de activación con nuestro control local de niveles
-            const synchronizedModules = result.data.map(mod => ({
-                ...mod,
-                is_active: mod.id <= maxUnlocked
-            }));
+            // Mapeamos respetando el estado real que viene de la base de datos de Supabase.
+            // Opcionalmente podemos validar también que el id no supere el nivel máximo alcanzado si así lo deseas.
+            const synchronizedModules = result.data.map(mod => {
+                // Soportamos tanto si el campo se llama 'is_active' (booleano) como 'status' ('Activo'/'Inactivo')
+                let activeStatus = false;
+                
+                if (typeof mod.is_active !== 'undefined') {
+                    activeStatus = Boolean(mod.is_active);
+                } else if (typeof mod.status !== 'undefined') {
+                    activeStatus = (mod.status === true || mod.status === 'Activo' || mod.status === 'active');
+                }
+
+                return {
+                    ...mod,
+                    // El módulo estará activo solo si el backend lo permite y el usuario ya llegó a ese nivel
+                    is_active: activeStatus && (mod.id <= maxUnlocked || activeStatus)
+                };
+            });
             renderModules(synchronizedModules);
         } else {
             renderModules(defaultModules);
