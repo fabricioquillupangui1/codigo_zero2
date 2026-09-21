@@ -111,7 +111,7 @@ async function fetchModules() {
             // Ordenamos estrictamente por ID para mantener la secuencia numérica correcta (1, 2, 3, 4, 5...)
             const sortedModules = result.data.sort((a, b) => a.id - b.id);
 
-            // Mapeamos respetando el estado real que viene de la base de datos de Supabase.
+            // Mapeamos aplicando la progresión estricta del juego
             const synchronizedModules = sortedModules.map(mod => {
                 let activeStatus = false;
                 
@@ -123,7 +123,9 @@ async function fetchModules() {
 
                 return {
                     ...mod,
-                    is_active: activeStatus && (mod.id <= maxUnlocked || activeStatus)
+                    // REGLA DE PROGRESIÓN: El módulo solo se habilita si está activo en la BD
+                    // Y ADEMÁS el usuario ya alcanzó o superó ese número de ID según su progreso.
+                    is_active: activeStatus && (mod.id <= maxUnlocked)
                 };
             });
             renderModules(synchronizedModules);
