@@ -108,10 +108,11 @@ async function fetchModules() {
         const result = await response.json();
 
         if (result.success && result.data && result.data.length > 0) {
+            // Ordenamos estrictamente por ID para mantener la secuencia numérica correcta (1, 2, 3, 4, 5...)
+            const sortedModules = result.data.sort((a, b) => a.id - b.id);
+
             // Mapeamos respetando el estado real que viene de la base de datos de Supabase.
-            // Opcionalmente podemos validar también que el id no supere el nivel máximo alcanzado si así lo deseas.
-            const synchronizedModules = result.data.map(mod => {
-                // Soportamos tanto si el campo se llama 'is_active' (booleano) como 'status' ('Activo'/'Inactivo')
+            const synchronizedModules = sortedModules.map(mod => {
                 let activeStatus = false;
                 
                 if (typeof mod.is_active !== 'undefined') {
@@ -122,7 +123,6 @@ async function fetchModules() {
 
                 return {
                     ...mod,
-                    // El módulo estará activo solo si el backend lo permite y el usuario ya llegó a ese nivel
                     is_active: activeStatus && (mod.id <= maxUnlocked || activeStatus)
                 };
             });
