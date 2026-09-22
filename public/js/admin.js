@@ -6,6 +6,9 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Variable global para almacenar las preguntas y aplicar filtros de manera fluida
+let allQuestions = [];
+
 document.addEventListener('DOMContentLoaded', async () => {
   console.log("Panel Admin inicializado.");
 
@@ -36,6 +39,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 1.1 Configurar eventos del Modal de Preguntas y Opciones
   setupQuestionModal();
+
+  // 1.2 Inicializar eventos de filtrado y opciones dinámicas del select de módulos
+  setupQuestionFilters();
+  await loadModuleFilterOptions();
 
   // 2. Cargar datos iniciales de usuarios
   await loadUsers();
@@ -205,7 +212,11 @@ async function createModule() {
   }]);
 
   if (error) alert('Error: ' + error.message);
-  else { alert('¡Módulo creado con éxito!'); loadModules(); }
+  else { 
+    alert('¡Módulo creado con éxito!'); 
+    loadModules(); 
+    loadModuleFilterOptions(); 
+  }
 }
 
 function attachModuleActions() {
@@ -215,7 +226,11 @@ function attachModuleActions() {
       if (confirm('¿Eliminar módulo?')) {
         const { error } = await supabase.from('modules').delete().eq('id', modId);
         if (error) alert('Error: ' + error.message);
-        else { alert('Módulo eliminado.'); loadModules(); }
+        else { 
+          alert('Módulo eliminado.'); 
+          loadModules(); 
+          loadModuleFilterOptions(); 
+        }
       }
     });
   });
@@ -240,13 +255,17 @@ function attachModuleActions() {
       }).eq('id', modId);
 
       if (error) alert('Error: ' + error.message);
-      else { alert('¡Actualizado con éxito!'); loadModules(); }
+      else { 
+        alert('¡Actualizado con éxito!'); 
+        loadModules(); 
+        loadModuleFilterOptions(); 
+      }
     });
   });
 }
 
 // ==========================================
-// GESTIÓN DE PREGUNTAS Y MODAL INTEGRADO
+// GESTIÓN DE PREGUNTAS, FILTROS Y MODAL INTEGRADO
 // ==========================================
 async function loadQuestions() {
   const qTableBody = document.getElementById('questions-table-body');
@@ -260,34 +279,113 @@ async function loadQuestions() {
 
     if (!questions || questions.length === 0) {
       qTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">No hay preguntas registradas.</td></tr>`;
+      allQuestions = [];
       return;
     }
 
-    qTableBody.innerHTML = '';
-    questions.forEach(q => {
-      const tr = document.createElement('tr');
-      const isActive = q.is_active === true || q.is_active === 'true';
-      tr.innerHTML = `
-        <td>${q.id}</td>
-        <td>${q.module_id}</td>
-        <td>${q.question || ''}</td>
-        <td>${q.points || 10}</td>
-        <td>${q.difficulty || 'medium'}</td>
-        <td><span style="color: ${isActive ? '#00ffcc' : '#ff4d4d'}; font-weight: bold;">${isActive ? 'Activa' : 'Inactiva'}</span></td>
-        <td>
-          <button class="cyber-btn btn-toggle-options" data-id="${q.id}" style="padding: 4px 8px; font-size: 0.75rem; margin-right: 4px;">👁️ Ver Respuestas</button>
-          <button class="btn-action btn-edit-q" title="Editar" data-id="${q.id}">✏️</button>
-          <button class="btn-action btn-delete-q" title="Eliminar" data-id="${q.id}">🗑️</button>
-        </td>
-      `;
-      qTableBody.appendChild(tr);
-    });
+    allQuestions = questions;
+    applyFilters();
 
-    attachQuestionActions();
   } catch (err) {
     console.error("Error al cargar preguntas:", err);
     qTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ff4d4d;">Error al cargar preguntas.</td></tr>`;
   }
+}
+
+function renderQuestionsTable(questionsList) {
+  const qTableBody = document.getElementById('questions-table-body');
+  if (!qTableBody) return;
+
+  if (!questionsList || questionsList.length === 0) {
+    qTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">No se encontraron preguntas con los filtros seleccionados.</td></tr>`;
+    return;
+  }
+
+  qTableBody.innerHTML = '';
+  questionsList.forEach(q => {
+    const tr = document.createElement('tr');
+    const isActive = q.is_active === true || q.is_active === 'true';
+    tr.innerHTML = `
+      <td>${q.id}</td>
+      <td>${q.module_id}</td>
+      <td>${q.question || ''}</td>
+      <td>${q.points || 10}</td>
+      <td>${q.difficulty || 'medium'}</td>
+      <td><span style="color: ${isActive ? '#00ffcc' : '#ff4d4d'}; font-weight: bold;">${isActive ? 'Activa' : 'Inactiva'}</span></td>
+      <td>
+        <button class="cyber-btn btn-toggle-options" data-id="${q.id}" style="padding: 4px 8px; font-size: 0.75rem; margin-right: 4px;">👁️ Ver Respuestas</button>
+        <button class="btn-action btn-edit-q" title="Editar" data-id="${q.id}">✏️</button>
+        <button class="btn-action btn-delete-q" title="Eliminar" data-id="${q.id}">🗑️</button>
+      </td>
+    `;
+    qTableBody.appendChild(tr);
+  });
+
+  attachQuestionActions();
+}
+
+function setupQuestionFilters() {
+    const searchInput = document.getElementById('search-input');
+    const filterModule = document.getElementById('filter-module');
+    const filterDifficulty = document.getElementById('filter-difficulty');
+    const filterStatus = document.getElementById('filter-status');
+
+    if (!searchInput || !filterModule || !filterDifficulty || !filterStatus) return;
+
+    searchInput.addEventListener('input', applyFilters);
+    filterModule.addEventListener('change', applyFilters);
+    filterDifficulty.addEventListener('change', applyFilters);
+    filterStatus.addEventListener('change', applyFilters);
+}
+
+function applyFilters() {
+    const searchInput = document.getElementById('search-input');
+    const filterModule = document.getElementById('filter-module');
+    const filterDifficulty = document.getElementById('filter-difficulty');
+    const filterStatus = document.getElementById('filter-status');
+
+    const searchText = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const selectedModule = filterModule ? filterModule.value : '';
+    const selectedDifficulty = filterDifficulty ? filterDifficulty.value : '';
+    const selectedStatus = filterStatus ? filterStatus.value : '';
+
+    const filtered = allQuestions.filter(q => {
+        const questionText = q.question ? q.question.toLowerCase() : '';
+        const matchesSearch = questionText.includes(searchText);
+
+        const matchesModule = selectedModule === "" || String(q.module_id) === selectedModule;
+        const matchesDifficulty = selectedDifficulty === "" || q.difficulty === selectedDifficulty;
+
+        let matchesStatus = true;
+        if (selectedStatus !== "") {
+            const isActive = q.is_active === true || q.is_active === 'true';
+            matchesStatus = (selectedStatus === 'activo' && isActive) || (selectedStatus === 'inactivo' && !isActive);
+        }
+
+        return matchesSearch && matchesModule && matchesDifficulty && matchesStatus;
+    });
+
+    renderQuestionsTable(filtered);
+}
+
+async function loadModuleFilterOptions() {
+    const selectModule = document.getElementById('filter-module');
+    if (!selectModule) return;
+
+    try {
+        const { data: modules, error } = await supabase.from('modules').select('id, title').order('id', { ascending: true });
+        if (error) throw error;
+
+        let optionsHtml = '<option value="">Todos los Módulos</option>';
+        if (modules) {
+            modules.forEach(mod => {
+                optionsHtml += `<option value="${mod.id}">Módulo ${mod.id}: ${mod.title}</option>`;
+            });
+        }
+        selectModule.innerHTML = optionsHtml;
+    } catch (err) {
+        console.warn('No se pudieron cargar los módulos para el filtro.', err);
+    }
 }
 
 function setupQuestionModal() {

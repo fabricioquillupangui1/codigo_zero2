@@ -278,3 +278,75 @@ body.admin-body {
         padding: 15px;
     }
 }
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    background: rgba(15, 23, 42, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 250px;
+    background: #0b0f19;
+    border: 1px solid #00f0ff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 10px 15px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-box input::placeholder {
+    color: #94a3b8;
+}
+
+.search-box button {
+    background: #00f0ff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.search-box button:hover {
+    background: #00acc1;
+}
+
+.filter-selects {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-selects select {
+    background: #0b0f19;
+    color: #fff;
+    border: 1px solid #00f0ff;
+    padding: 10px 12px;
+    border-radius: 6px;
+    outline: none;
+    cursor: font;
+    font-size: 14px;
+}
+
+.filter-selects select option {
+    background: #0b0f19;
+    color: #fff;
+}
