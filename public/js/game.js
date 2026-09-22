@@ -3,7 +3,7 @@ let questions = []; // Solo 4 aleatorias base
 let currentIndex = 0;
 let score = 0;
 let consecutiveCorrect = 0; 
-let incorrectCount = 0;          
+let incorrectCount = 0;         
 let userAnswers = [];
 let timer = null;
 let timeLeft = 20;          
@@ -14,7 +14,7 @@ const dummyUserId = "11111111-1111-1111-1111-111111111111";
 
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    moduleId = urlParams.get('module') || 1;
+    moduleId = parseInt(urlParams.get('module') || 1); // Aseguramos que sea entero para comparar bien
     
     // 1. Mostrar primero el modal de advertencia
     showWarningModal(moduleId);
@@ -26,7 +26,8 @@ function showWarningModal(modId) {
         1: '"¿Seguro que dominas la maquetación o solo dependes del "Copy-Paste"? Muestra si realmente sabes diseñar."',
         2: '"¿Criptografía y lógica pura o vas a adivinar las funciones? Demuestra tu nivel en backend."',
         3: '"¿Las bases de datos se manejan con lógica o con fe? Pon a prueba tus consultas SQL."',
-        4: '"¿Redes y Scrum al límite o colapsa el servidor? Demuestra tu agilidad técnica."'
+        4: '"¿Redes y Scrum al límite o colapsa el servidor? Demuestra tu agilidad técnica."',
+        5: '"¿Preparado para el examen de titulación? Demuestra tus conocimientos integrales al máximo nivel."'
     };
 
     const msg = modMessages[modId] || '"Este módulo evaluará tus conocimientos al límite. Una vez dentro, no hay marcha atrás."';
@@ -69,17 +70,36 @@ function showRulesModal(modId) {
     let rulesOverlay = document.createElement('div');
     rulesOverlay.id = 'rules-modal-overlay';
     rulesOverlay.className = 'modal-overlay';
+
+    // Texto de reglas adaptado si es el módulo 5 o los demás (sin romper nada)
+    let rulesListHtml = '';
+    if (modId === 5) {
+        rulesListHtml = `
+            <p>🎓 <strong>Examen de Titulación:</strong></p>
+            <ul>
+                <li>Banco completo de preguntas de Redes, Bases de Datos, Programación y Soporte.</li>
+                <li>Fácil: <strong>60 pts</strong> | Media: <strong>100 pts</strong> | Difícil: <strong>150 pts</strong></li>
+            </ul>
+            <p>🔴 <strong>Pregunta Incorrecta / Tiempo Agotado:</strong> <strong>0 pts</strong></p>
+            <p>🎯 <strong>Meta:</strong> Completa todo el banco de preguntas de titulación con éxito.</p>
+        `;
+    } else {
+        rulesListHtml = `
+            <p>🟢 <strong>Pregunta Correcta:</strong></p>
+            <ul>
+                <li>Fácil: <strong>60 pts</strong> | Media: <strong>100 pts</strong> | Difícil: <strong>150 pts</strong></li>
+            </ul>
+            <p>🔴 <strong>Pregunta Incorrecta / Tiempo Agotado:</strong> <strong>0 pts</strong></p>
+            <p>🎯 <strong>Meta y Repesca:</strong> Necesitas mínimo <strong>250 pts</strong>. Si al acabar las 4 preguntas base tienes entre <strong>120 y 240 pts</strong>, recibes 1 pregunta extra.</p>
+        `;
+    }
+
     rulesOverlay.innerHTML = `
         <div class="warning-modal-card rules-card">
             <div class="warning-icon">📜</div>
             <h2>REGLAS DEL CIBER-RETO</h2>
             <div class="rules-list-box">
-                <p>🟢 <strong>Pregunta Correcta:</strong></p>
-                <ul>
-                    <li>Fácil: <strong>60 pts</strong> | Media: <strong>100 pts</strong> | Difícil: <strong>150 pts</strong></li>
-                </ul>
-                <p>🔴 <strong>Pregunta Incorrecta / Tiempo Agotado:</strong> <strong>0 pts</strong></p>
-                <p>🎯 <strong>Meta y Repesca:</strong> Necesitas mínimo <strong>250 pts</strong>. Si al acabar las 4 preguntas base tienes entre <strong>120 y 240 pts</strong>, recibes 1 pregunta extra.</p>
+                ${rulesListHtml}
             </div>
             <button id="btn-comenzar-ya" class="btn-aceptar-reto" style="width: 100%; margin-top: 15px;">¡ENTENDIDO, A JUGAR! 🚀</button>
         </div>
@@ -99,7 +119,14 @@ async function fetchQuestions(modId) {
 
         if (result.success && result.data.length > 0) {
             allQuestions = result.data;
-            questions = getRandomElements(allQuestions, 4); // 4 preguntas aleatorias
+            
+            // ÚNICO CAMBIO CLAVE AÑADIDO: Si es módulo 5 carga todas las preguntas, si es otro carga 4 aleatorias
+            if (modId === 5) {
+                questions = allQuestions; 
+            } else {
+                questions = getRandomElements(allQuestions, 4); 
+            }
+
             loadQuestion();
         } else {
             document.getElementById('question-text').innerText = 'No hay preguntas disponibles para este módulo todavía.';
@@ -107,7 +134,7 @@ async function fetchQuestions(modId) {
     } catch (err) {
         console.error('Error al obtener preguntas:', err);
         allQuestions = getMockQuestions(modId);
-        questions = getRandomElements(allQuestions, 4);
+        questions = (modId === 5) ? allQuestions : getRandomElements(allQuestions, 4);
         loadQuestion();
     }
 }
@@ -157,7 +184,7 @@ function loadQuestion() {
 }
 
 function startTimer() {
-    timeLeft = 15; 
+    timeLeft = 20; // Conservado tal cual
     const timeEl = document.getElementById('time-left');
     if (timeEl) timeEl.innerText = timeLeft;
     
@@ -190,7 +217,7 @@ function selectOption(optionId, btnElement) {
         consecutiveCorrect++;
         incorrectCount = 0; 
 
-        // Asignación de puntaje base estricta según la dificultad real de la pregunta (sin restas ni bonos extra)
+        // Asignación de puntaje base estricta según la dificultad real de la pregunta
         if (diff.includes('dificil') || diff.includes('hard') || diff === 'difícil') {
             pointsEarned = 150;
         } else if (diff.includes('media') || diff.includes('medium')) {
@@ -278,8 +305,8 @@ function nextQuestion() {
 }
 
 function evaluateGameCompletion() {
-    // REGLA DE REPESCA / PREGUNTA EXTRA: Si puntaje entre 120 y 240 al acabar las 4 base
-    if (score >= 120 && score <= 240 && !isExtraQuestion && allQuestions.length > 4) {
+    // REGLA DE REPESCA / PREGUNTA EXTRA: Solo aplica si NO es el módulo 5 y está entre 120 y 240 pts
+    if (moduleId !== 5 && score >= 120 && score <= 240 && !isExtraQuestion && allQuestions.length > 4) {
         isExtraQuestion = true;
         alert('⚡ ¡Estás en la zona de repesca (' + score + ' pts)! Tienes 1 pregunta extra para alcanzar la meta de 250 puntos.');
         const remaining = allQuestions.filter(q => !questions.some(nq => nq.id === q.id));
@@ -290,7 +317,7 @@ function evaluateGameCompletion() {
         }
     }
 
-    // Si ya no hay repesca o ya se respondió la pregunta extra, finaliza y muestra el resumen
+    // Si ya no hay repesca o es el módulo 5, finaliza y muestra el resumen
     finishGame();
 }
 
@@ -306,10 +333,10 @@ async function finishGame() {
     const alreadyCompletedBefore = completedModules[moduleId] === true;
 
     if (passed) {
-        // Si APRUEBA: Desbloquea el siguiente módulo si aplica
+        // Si APRUEBA: Desbloquea el siguiente módulo si aplica (hasta el 5)
         const currentMax = parseInt(localStorage.getItem('cz_max_unlocked_module')) || 1;
         const nextMod = parseInt(moduleId) + 1;
-        if (nextMod > currentMax && nextMod <= 4) {
+        if (nextMod > currentMax && nextMod <= 5) {
             localStorage.setItem('cz_max_unlocked_module', nextMod);
         }
 
@@ -345,7 +372,7 @@ async function finishGame() {
         if (alreadyCompletedBefore) {
             statusMessage = '🔄 ¡Módulo repasado con éxito! (Ya habías obtenido los puntos de este nivel anteriormente).';
         } else {
-            statusMessage = '🚀 ¡Se ha acumulado tu puntaje y desbloqueado el siguiente módulo!';
+            statusMessage = '🚀 ¡Se ha acumulado tu puntaje y desbloqueado el siguiente nivel!';
         }
     } else {
         statusMessage = '💡 ¡Inténtalo de nuevo para superar la meta!';
@@ -470,14 +497,14 @@ async function saveGameResultsToBackend() {
             return;
         }
 
-        // Mapeamos solo lo necesario para que el backend evalúe según la dificultad (60, 100, 150 o 0)
+        // Mapeamos solo lo necesario para que el backend evalúe según la dificultad
         const formattedAnswers = userAnswers.map(ans => ({
             questionId: ans.questionId,
             optionId: ans.optionId,
             timeLeft: ans.timeLeft || 0
         }));
 
-        // Hacemos la petición POST al backend (el servidor calcula los puntos oficiales)
+        // Hacemos la petición POST al backend
         const response = await fetch('/api/game/submit-game', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -493,7 +520,6 @@ async function saveGameResultsToBackend() {
         if (result.success) {
             console.log('¡Partida sincronizada perfectamente!', result);
 
-            // Actualizamos el puntaje local en localStorage usando el puntaje oficial que devolvió el backend
             if (userData.dls_score !== undefined) {
                 userData.dls_score += result.scoreObtained;
                 localStorage.setItem('cz_user', JSON.stringify(userData));
