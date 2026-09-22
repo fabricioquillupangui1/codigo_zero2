@@ -75,7 +75,7 @@ async function fetchModules() {
     // Obtenemos el nivel máximo desbloqueado desde localStorage (por defecto es 1)
     const maxUnlocked = parseInt(localStorage.getItem('cz_max_unlocked_module')) || 1;
 
-    // Lista completa predeterminada de respaldo
+    // Lista completa predeterminada de respaldo (actualizada para incluir el Módulo 5)
     const defaultModules = [
         { 
             id: 1, 
@@ -99,6 +99,12 @@ async function fetchModules() {
             id: 4, 
             title: 'Módulo 4: Redes y Scrum', 
             description: 'Comandos de red, subredes IP, servidores Linux y metodologías ágiles.', 
+            is_active: false 
+        },
+        { 
+            id: 5, 
+            title: 'Módulo 5: Examen de Titulación', 
+            description: '120 preguntas para el examen de titulación (Redes, Bases de Datos, Programación y Soporte Técnico).', 
             is_active: false 
         }
     ];
@@ -130,11 +136,20 @@ async function fetchModules() {
             });
             renderModules(synchronizedModules);
         } else {
-            renderModules(defaultModules);
+            // Si la API no responde, usamos el respaldo actualizado que ya incluye el Módulo 5
+            const synchronizedDefault = defaultModules.map(mod => ({
+                ...mod,
+                is_active: mod.id === 1 && (mod.id <= maxUnlocked)
+            }));
+            renderModules(synchronizedDefault);
         }
     } catch (err) {
         console.warn('API de módulos no disponible localmente, cargando esquema predeterminado:', err);
-        renderModules(defaultModules);
+        const synchronizedDefault = defaultModules.map(mod => ({
+            ...mod,
+            is_active: mod.id === 1 && (mod.id <= maxUnlocked)
+        }));
+        renderModules(synchronizedDefault);
     }
 }
 
