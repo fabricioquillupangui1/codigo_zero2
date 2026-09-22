@@ -157,7 +157,7 @@ function loadQuestion() {
 }
 
 function startTimer() {
-    timeLeft = 20; 
+    timeLeft = 15; 
     const timeEl = document.getElementById('time-left');
     if (timeEl) timeEl.innerText = timeLeft;
     
