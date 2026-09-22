@@ -75,7 +75,7 @@ async function fetchModules() {
     // Obtenemos el nivel máximo desbloqueado desde localStorage (por defecto es 1)
     const maxUnlocked = parseInt(localStorage.getItem('cz_max_unlocked_module')) || 1;
 
-    // Lista completa predeterminada de respaldo (actualizada para incluir el Módulo 5)
+    // Lista completa predeterminada de respaldo
     const defaultModules = [
         { 
             id: 1, 
@@ -105,7 +105,7 @@ async function fetchModules() {
             id: 5, 
             title: 'Módulo 5: Examen de Titulación', 
             description: '120 preguntas para el examen de titulación (Redes, Bases de Datos, Programación y Soporte Técnico).', 
-            is_active: false 
+            is_active: true // Por defecto activo para pruebas, controlado por BD
         }
     ];
 
@@ -114,10 +114,10 @@ async function fetchModules() {
         const result = await response.json();
 
         if (result.success && result.data && result.data.length > 0) {
-            // Ordenamos estrictamente por ID para mantener la secuencia numérica correcta (1, 2, 3, 4, 5...)
+            // Ordenamos estrictamente por ID para mantener la secuencia numérica correcta
             const sortedModules = result.data.sort((a, b) => a.id - b.id);
 
-            // Mapeamos aplicando la progresión estricta del juego
+            // Mapeamos aplicando la regla especial para el Módulo 5
             const synchronizedModules = sortedModules.map(mod => {
                 let activeStatus = false;
                 
@@ -127,19 +127,20 @@ async function fetchModules() {
                     activeStatus = (mod.status === true || mod.status === 'Activo' || mod.status === 'active');
                 }
 
+                // EXCEPCIÓN: Si es el Módulo 5, se activa/desactiva DIRECTAMENTE según la Base de Datos.
+                // Los módulos 1 al 4 siguen manteniendo la progresión secuencial (mod.id <= maxUnlocked).
+                const finalActiveState = (mod.id === 5) ? activeStatus : (activeStatus && (mod.id <= maxUnlocked));
+
                 return {
                     ...mod,
-                    // REGLA DE PROGRESIÓN: El módulo solo se habilita si está activo en la BD
-                    // Y ADEMÁS el usuario ya alcanzó o superó ese número de ID según su progreso.
-                    is_active: activeStatus && (mod.id <= maxUnlocked)
+                    is_active: finalActiveState
                 };
             });
             renderModules(synchronizedModules);
         } else {
-            // Si la API no responde, usamos el respaldo actualizado que ya incluye el Módulo 5
             const synchronizedDefault = defaultModules.map(mod => ({
                 ...mod,
-                is_active: mod.id === 1 && (mod.id <= maxUnlocked)
+                is_active: (mod.id === 5) ? mod.is_active : (mod.id === 1 && (mod.id <= maxUnlocked))
             }));
             renderModules(synchronizedDefault);
         }
@@ -147,7 +148,7 @@ async function fetchModules() {
         console.warn('API de módulos no disponible localmente, cargando esquema predeterminado:', err);
         const synchronizedDefault = defaultModules.map(mod => ({
             ...mod,
-            is_active: mod.id === 1 && (mod.id <= maxUnlocked)
+            is_active: (mod.id === 5) ? mod.is_active : (mod.id === 1 && (mod.id <= maxUnlocked))
         }));
         renderModules(synchronizedDefault);
     }
