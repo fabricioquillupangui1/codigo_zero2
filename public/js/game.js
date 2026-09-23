@@ -493,11 +493,11 @@ async function saveGameResultsToBackend() {
     try {
         let userData = JSON.parse(localStorage.getItem('cz_user'));
         
-        // Si no hay sesión activa, creamos un respaldo seguro usando el ID 1 de Supabase
+        // Si no hay sesión activa, creamos un respaldo seguro usando un UUID real de Supabase
         if (!userData || !userData.id) {
             console.warn("⚠️ No se encontró sesión activa en localStorage. Usando usuario de respaldo temporal.");
             userData = { 
-                id: 1, // Asegúrate de que el ID 1 exista en tu tabla 'users' de Supabase
+                id: "00000000-0000-0000-0000-000000000000", // 👈 REEMPLAZA ESTE UUID por uno real de tu tabla 'users' en Supabase
                 nickname: 'Estudiante Invitado', 
                 dls_score: 0 
             };
@@ -516,7 +516,7 @@ async function saveGameResultsToBackend() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                userId: userData.id, // ¡Aquí va el ID real guardado en tu login!
+                userId: userData.id, // ¡Aquí viaja el UUID correcto!
                 moduleId: parseInt(moduleId),
                 answers: formattedAnswers,
                 durationSec: 60
