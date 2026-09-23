@@ -108,34 +108,54 @@ function attachUserActions() {
     });
   });
 
-  document.querySelectorAll('.btn-edit').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const userId = e.currentTarget.getAttribute('data-id');
-      const row = e.currentTarget.closest('tr');
-      const currentNickname = row.children[0].innerText;
-      const currentEmail = row.children[1].innerText;
-      const currentRole = row.children[2].innerText.trim();
-      const currentAvatar = row.children[3].innerText;
+document.querySelectorAll('.btn-edit-q').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    const qId = e.currentTarget.getAttribute('data-id');
+    const row = e.currentTarget.closest('tr');
+    
+    const currentText = row.children[2].innerText;
+    const currentPoints = row.children[3].innerText;
+    const currentDiff = row.children[4].innerText;
+    // Ehecha upe estado oĩva la tabla-pe (Aktiva / Inactiva)
+    const currentStatusText = row.children[5].innerText.trim();
+    const currentIsActive = currentStatusText === 'Activa';
 
-      const newNickname = prompt("Editar Nickname:", currentNickname);
-      if (newNickname === null) return;
-      const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
-      if (newEmail === null) return;
-      const newRole = prompt("Editar Rol (admin / student):", currentRole);
-      if (newRole === null) return;
-      const newAvatar = prompt("Editar Avatar:", currentAvatar);
-      if (newAvatar === null) return;
+    const newModuleId = prompt("Editar ID Módulo:", row.children[1].innerText);
+    if (newModuleId === null) return;
+    const newText = prompt("Editar Pregunta:", currentText);
+    if (newText === null) return;
+    const newPoints = prompt("Editar Puntos:", currentPoints);
+    if (newPoints === null) return;
+    const newDiff = prompt("Editar Dificultad (facil, media, dificil):", currentDiff);
+    if (newDiff === null) return;
+    
+    // Jerure upe estado pyahu lápiz rupive
+    const newStatusInput = prompt("¿Está activa la pregunta? (si/no):", currentIsActive ? "si" : "no");
+    if (newStatusInput === null) return;
+    const newIsActive = newStatusInput.trim().toLowerCase() === 'si';
 
-      const { error } = await supabase
-        .from('users')
-        .update({ nickname: newNickname.trim(), email: newEmail.trim(), role: newRole.trim(), avatar: newAvatar.trim() })
-        .eq('id', userId);
+    const newCode = prompt("Editar Código de Ejemplo (Opcional):", "");
+    if (newCode === null) return;
+    const newExplanation = prompt("Editar Explicación de la respuesta (Opcional):", "");
+    if (newExplanation === null) return;
 
-      if (error) alert('Error al actualizar: ' + error.message);
-      else { alert('¡Usuario actualizado con éxito!'); loadUsers(); }
-    });
+    const { error } = await supabase.from('questions').update({
+      module_id: parseInt(newModuleId),
+      question: newText.trim(),
+      points: parseInt(newPoints) || 10,
+      difficulty: newDiff.trim(),
+      is_active: newIsActive, // <--- Ko'ápe oñembopyahu upe estado
+      code_snippet: newCode.trim() ? newCode.trim() : null,
+      explanation: newExplanation.trim() ? newExplanation.trim() : null
+    }).eq('id', qId);
+
+    if (error) alert('Error: ' + error.message);
+    else { 
+      alert('¡Pregunta actualizada con éxito!'); 
+      loadQuestions(); 
+    }
   });
-}
+});
 
 // ==========================================
 // GESTIÓN DE MÓDULOS (Sin required_score)
