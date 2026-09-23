@@ -5,7 +5,7 @@ const router = Router();
 
 // Enviar y evaluar una partida completa jugada
 router.post('/submit-game', async (req, res) => {
-  // Recibimos los datos del frontend (answers puede traer questionId y optionId)
+  // Recibimos los datos del frontend
   const { userId, moduleId, answers, durationSec } = req.body; 
   // answers es un array de objetos: [{ questionId, optionId, timeLeft }]
 
@@ -14,8 +14,15 @@ router.post('/submit-game', async (req, res) => {
     let totalCalculatedScore = 0;
     const evaluatedAnswers = [];
 
+    // Validamos que lleguen datos básicos
+    if (!userId || !moduleId || !Array.isArray(answers)) {
+      return res.status(400).json({ success: false, message: 'Datos incompletos en la solicitud.' });
+    }
+
     // 1. Validar cada respuesta contra la base de datos y asignar puntos por dificultad (facil: 60, media: 100, dificil: 150)
     for (const ans of answers) {
+      if (!ans.optionId || !ans.questionId) continue;
+
       const { data: optionData, error: optError } = await supabase
         .from('question_options')
         .select('is_correct')
@@ -25,13 +32,12 @@ router.post('/submit-game', async (req, res) => {
       if (optError) continue;
 
       const isCorrect = optionData ? optionData.is_correct : false;
-      
       let earned = 0;
 
       if (isCorrect) {
         correctCount++;
 
-        // Consultamos la pregunta para obtener su dificultad (facil, media, dificil)
+        // Consultamos la pregunta para obtener su dificultad
         const { data: questionData, error: qError } = await supabase
           .from('questions')
           .select('difficulty, points')
@@ -54,7 +60,7 @@ router.post('/submit-game', async (req, res) => {
           earned = 100; // Respaldo si no encuentra la pregunta
         }
       } else {
-        earned = 0; // Si falla, suma 0 (CERO NEGATIVOS)
+        earned = 0; // Si falla, suma 0
       }
 
       totalCalculatedScore += earned;
@@ -63,15 +69,14 @@ router.post('/submit-game', async (req, res) => {
         question_id: ans.questionId,
         option_id: ans.optionId,
         is_correct: isCorrect,
-        points_earned: earned, // <--- Guarda 60, 100, 150 o 0
-        time_left: ans.timeLeft
+        points_earned: earned,
+        time_left: ans.timeLeft || 0
       });
     }
 
-    // El puntaje total a guardar es el calculado limpiamente
     const finalScoreToSave = totalCalculatedScore;
     
-    // Criterio de aprobación basado en el puntaje real obtenido (ej: 250 puntos)
+    // Criterio de aprobación (ej: 250 puntos)
     const passed = finalScoreToSave >= 250; 
 
     // 2. Guardar en la tabla transaccional game_history
@@ -87,7 +92,10 @@ router.post('/submit-game', async (req, res) => {
       .select()
       .single();
 
-    if (historyError) throw historyError;
+    if (historyError) {
+      console.error('Error al insertar en game_history:', historyError.message);
+      throw historyError;
+    }
 
     // 3. Guardar el detalle de respuestas en game_answers
     const historyId = historyData.id;
@@ -97,7 +105,14 @@ router.post('/submit-game', async (req, res) => {
     }));
 
     if (answersToInsert.length > 0) {
-      await supabase.from('game_answers').insert(answersToInsert);
+      const { error: answersError } = await supabase
+        .from('game_answers')
+        .insert(answersToInsert);
+
+      if (answersError) {
+        console.error('Error al insertar en game_answers:', answersError.message);
+        throw answersError;
+      }
     }
 
     // 4. Actualizar el puntaje total DLS y nivel desbloqueado del usuario
@@ -117,7 +132,7 @@ router.post('/submit-game', async (req, res) => {
         .eq('id', userId);
     }
 
-    res.json({
+    return res.json({
       success: true,
       scoreObtained: finalScoreToSave,
       passed,
@@ -126,7 +141,8 @@ router.post('/submit-game', async (req, res) => {
     });
 
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error('Excepción general en /submit-game:', err.message);
+    return res.status(500).json({ success: false, message: err.message });
   }
 });
 
