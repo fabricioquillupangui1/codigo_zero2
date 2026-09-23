@@ -491,10 +491,18 @@ function getMockQuestions(modId) {
 
 async function saveGameResultsToBackend() {
     try {
-        const userData = JSON.parse(localStorage.getItem('cz_user'));
+        let userData = JSON.parse(localStorage.getItem('cz_user'));
+        
+        // Si no hay usuario autenticado en localStorage, asignamos un respaldo temporal con ID 1
         if (!userData || !userData.id) {
-            console.warn("No se encontró un usuario autenticado. No se guardará el progreso.");
-            return;
+            console.warn("⚠️ No se encontró un usuario autenticado en localStorage. Usando usuario de respaldo por defecto (ID: 1).");
+            userData = { 
+                id: 1, 
+                nickname: 'Fabricio', 
+                dls_score: 0 
+            };
+            // Opcional: guardarlo de una vez para futuras interacciones
+            localStorage.setItem('cz_user', JSON.stringify(userData));
         }
 
         // Mapeamos solo lo necesario para que el backend evalúe según la dificultad
@@ -532,7 +540,6 @@ async function saveGameResultsToBackend() {
         console.error('Error de red al intentar conectar con el backend:', err);
     }
 }
-
 // Asegúrate de que el DOM esté listo o ponlo al final del archivo
 document.getElementById('next-btn').addEventListener('click', () => {
     nextQuestion();
